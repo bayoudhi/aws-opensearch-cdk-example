@@ -10,7 +10,7 @@ export class AwsOpensearchCdkExampleStack extends cdk.Stack {
 
     new LambdaToOpenSearch(this, "LambdaToOpenSearch", {
       lambdaFunctionProps: {
-        code: Code.fromAsset(`lib/lambda`),
+        code: Code.fromAsset(`lib/lambdas/os-client`),
         runtime: Runtime.NODEJS_16_X,
         handler: "index.handler",
       },

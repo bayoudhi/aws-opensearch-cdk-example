@@ -1,27 +1,22 @@
-import { LambdaToOpenSearch } from "@aws-solutions-constructs/aws-lambda-opensearch";
 import * as cdk from "aws-cdk-lib";
-import { Aws } from "aws-cdk-lib";
-import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
-
+import { Domain, EngineVersion } from "aws-cdk-lib/aws-opensearchservice";
 export class AwsOpensearchCdkExampleStack extends cdk.Stack {
+  public domain: Domain;
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new LambdaToOpenSearch(this, "LambdaToOpenSearch", {
-      lambdaFunctionProps: {
-        code: Code.fromAsset(`lib/lambdas/os-client`),
-        runtime: Runtime.NODEJS_16_X,
-        handler: "index.handler",
+    this.domain = new Domain(this, "Domain", {
+      version: EngineVersion.OPENSEARCH_1_3,
+      capacity: {
+        dataNodes: 1,
+        dataNodeInstanceType: "t3.small.search",
       },
-      openSearchDomainName: "opensearch",
-      cognitoDomainName: "globallyuniquedomain" + Aws.ACCOUNT_ID,
-      openSearchDomainProps: {
-        clusterConfig: {
-          dedicatedMasterEnabled: false,
-          instanceCount: 1,
-          instanceType: "t3.small.search",
-        },
+      logging: {
+        appLogEnabled: true,
+        slowSearchLogEnabled: true,
+        slowIndexLogEnabled: true,
       },
     });
   }
